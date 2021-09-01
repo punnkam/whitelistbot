@@ -2,17 +2,16 @@
 
 const fs = require("fs");
 const { Client, Collection, Intents } = require("discord.js");
-const { TOKEN, GUILD_ID, PREFIX } = require("../config.js");
+const { TOKEN, GUILD_ID, PREFIX, ADDRESS_CHANNEL } = require("../config.js");
 const client = new Client({
 	intents: [
 		Intents.FLAGS.GUILDS,
 		Intents.FLAGS.GUILD_MESSAGES,
 		Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-		Intents.FLAGS.GUILD_MESSAGE_TYPING,
 		Intents.FLAGS.DIRECT_MESSAGES,
 		Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
-		Intents.FLAGS.DIRECT_MESSAGE_TYPING,
 	],
+	partials: ["CHANNEL"],
 });
 
 client.commands = new Collection();
@@ -31,33 +30,40 @@ client.once("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
-	if (!message.content.startsWith(PREFIX) || message.author.bot) return;
-	const suffix = message.content.split(PREFIX)[1].split(" ");
-	const commandName = suffix[0];
+	if (message.author.bot) return;
+	if (message.channel.type === "DM") {
+		try {
+			// validate address as much as possible. could use ethers to get address as well
+			if (!message.content.startsWith("0x"))
+				throw "Invalid start on address";
+			if (message.content.length !== 42)
+				throw "Invalid length of address";
 
-	/*if (!interaction.isCommand()) return;*/
+			// post message in ADDRESS_CHANNEL {user: address}
+			await client.channels.cache
+				.get(ADDRESS_CHANNEL)
+				.send(`<@${message.author.id}>: ${message.content}`);
 
-	const command = client.commands.get(commandName);
-	//let admin_roles = [];
+			message.react("✅");
+		} catch (err) {
+			message.react("❌");
+			message.reply(err);
+		}
+	} else if (message.channel.type === "GUILD_TEXT") {
+		if (!message.content.startsWith(PREFIX)) return;
+		const suffix = message.content.split(PREFIX)[1].split(" ");
+		const commandName = suffix[0];
 
-	if (!command) return;
+		const command = client.commands.get(commandName);
 
-	/*interaction.member.guild.roles.fetch().then((res) => {
-		res.map((role) => {
-			if (role.permissions.has("ADMINISTRATOR"))
-				admin_roles.push(role.id);
-		});
-	});*/
+		if (!command) return;
 
-	try {
-		await command.execute(client, message);
-	} catch (error) {
-		console.error(error);
-		message.reply("There was an error while executing this command!");
-		/*await interaction.reply({
-			content: "There was an error while executing this command!",
-			ephemeral: true,
-		});*/
+		try {
+			await command.execute(client, message);
+		} catch (error) {
+			console.error(chalk.red(error));
+			message.reply("There was an error while executing this command!");
+		}
 	}
 });
 
