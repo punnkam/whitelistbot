@@ -39,7 +39,7 @@ module.exports = {
 						const user = message.mentions.users.get(member.id);
 						const channel = await user.createDM();
 						await channel.send(
-							`Congratulations <@${member.id}>. You have been selected for The Sevens whitelist! Please respond to this DM with your address and your address only! Spamming will lead to removal from the whitelist`
+							`Congratulations <@${member.id}>. You have been selected for The Sevens whitelist! Please respond to this DM with your ETH wallet address and your ETH wallet address only! Spamming will lead to removal from the whitelist`
 						);
 					} catch (err) {
 						// notify who does not have DM permissions.
