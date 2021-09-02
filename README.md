@@ -1,6 +1,6 @@
 # Whitelist Discord Bot
 
-Made for TheSevens
+Built for TheSevens
 
 ```
 bum777#5410: 0xbA842b7DA417Ba762D75e8F99e11c2980a8F8051
