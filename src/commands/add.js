@@ -8,12 +8,6 @@ const {
 	LOG_CHANNEL,
 } = require("../../config.js");
 
-const announcement_msg = `Yō 7's crew @everyone! ᐟᐟᐟᐟ\n\nThe <@&882300073730519041> have been on the lookout, scouting for potential Sevens. We are feeling confident the following 7 have it in them to become a real Seven. Therefore we will add them to the pre-sale whitelist!\n\nHuge congrats to:\n${stringified_members.substring(
-	0,
-	stringified_members.length - 2
-)}! If you have not received a DM from this bot regarding further instructions, please reach out to one of the <@&882300035373613057>.\n\nHow to make it to the whitelist? Be here, be creative, be kind, help others and spread the word.
-				`;
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("add")
@@ -31,6 +25,12 @@ module.exports = {
 					members.push(member);
 					stringified_members += `<@${member.id}>, `;
 				});
+				
+				let announcement_msg = `Yō 7's crew @everyone! ᐟᐟᐟᐟ\n\nThe <@&882300073730519041> have been on the lookout, scouting for potential Sevens. We are feeling confident the following 7 have it in them to become a real Seven. Therefore we will add them to the pre-sale whitelist!\n\nHuge congrats to:\n${stringified_members.substring(
+					0,
+					stringified_members.length - 2
+				)}! If you have not received a DM from this bot regarding further instructions, please reach out to one of the <@&882300035373613057>.\n\nHow to make it to the whitelist? Be here, be creative, be kind, help others and spread the word.
+								`;
 
 				for (const member of members) {
 					try {
